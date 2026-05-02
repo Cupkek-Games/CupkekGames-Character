@@ -24,7 +24,7 @@ namespace CupkekGames.Character
         Horror01 = 13,
         Exclamation01 = 14,
 
-        // Scout
+        // Gathering / interaction
         Harvesting = 1000,
         Mining = 1001,
         GatherStanding = 1002,
