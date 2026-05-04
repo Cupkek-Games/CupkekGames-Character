@@ -5,18 +5,18 @@ using CupkekGames.KeyValueDatabases;
 
 namespace CupkekGames.Character
 {
-  public class BlendShapeDatabase : KeyValueDatabaseMonoSO<BlendShapeEnum, BlendShapeListSO>
+  public class BlendShapeDatabase : KeyValueDatabaseMonoSO<string, BlendShapeListSO>
   {
     [SerializeField] private BlendShapeDatabaseVFX vfx;
 
-    public BlendShapeListSO GetByType(BlendShapeEnum type)
+    public BlendShapeListSO GetByType(string kind)
     {
-      return GetValue(type);
+      return GetValue(kind);
     }
 
-    public VFXBundle GetVFX(BlendShapeEnum type)
+    public VFXBundle GetVFX(string kind)
     {
-      return vfx.GetValue(type);
+      return vfx.GetValue(kind);
     }
   }
 }

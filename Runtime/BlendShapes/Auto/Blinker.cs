@@ -213,9 +213,9 @@ namespace CupkekGames.Character
       Stop();
     }
 
-    private void OnExpressionPlay(BlendShapeEnum expression)
+    private void OnExpressionPlay(string expression)
     {
-      if (expression == BlendShapeEnum.Neutral)
+      if (expression == BlendShapeKinds.Neutral)
       {
         // Enable blinker for neutral expression
         _isEnabled = true;

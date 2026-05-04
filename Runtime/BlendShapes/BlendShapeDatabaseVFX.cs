@@ -1,10 +1,9 @@
-
 using CupkekGames.VFX;
 using CupkekGames.KeyValueDatabases;
 
 namespace CupkekGames.Character
 {
-  public class BlendShapeDatabaseVFX : KeyValueDatabaseMono<BlendShapeEnum, VFXBundle>
+  public class BlendShapeDatabaseVFX : KeyValueDatabaseMono<string, VFXBundle>
   {
     private void Awake()
     {

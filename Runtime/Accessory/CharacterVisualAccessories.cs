@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 using CupkekGames.TimeSystem;
-using CupkekGames.TimeSystem;
 using System.Threading;
 
 namespace CupkekGames.Character
@@ -15,7 +14,7 @@ namespace CupkekGames.Character
 
     private void Awake()
     {
-      EnableEquipment(VisualAccessoryRole.DEFAULT);
+      EnableEquipment(VisualAccessoryRoleKinds.DEFAULT);
     }
 
     private void OnDestroy()
@@ -25,7 +24,7 @@ namespace CupkekGames.Character
 
     public void EnableEquipments()
     {
-      EnableEquipment(VisualAccessoryRole.DEFAULT);
+      EnableEquipment(VisualAccessoryRoleKinds.DEFAULT);
     }
 
     public void DisableEquipments()
@@ -36,7 +35,7 @@ namespace CupkekGames.Character
       }
     }
 
-    public void EnableEquipment(VisualAccessoryRole role)
+    public void EnableEquipment(string role)
     {
       foreach (CharacterVisualAccessory accessory in _equipments)
       {
@@ -55,15 +54,10 @@ namespace CupkekGames.Character
     /// Enable equipment with auto-reset to DEFAULT after duration.
     /// If called again before duration ends, the timer resets.
     /// </summary>
-    public void EnableEquipmentWithAutoReset(VisualAccessoryRole role, float duration)
+    public void EnableEquipmentWithAutoReset(string role, float duration)
     {
-      // Cancel any existing countdown
       _resetCountdown?.Dispose();
-
-      // Enable the requested equipment
       EnableEquipment(role);
-
-      // Start new countdown to reset to DEFAULT
       StartResetCountdown(duration);
     }
 
@@ -73,13 +67,8 @@ namespace CupkekGames.Character
     /// </summary>
     public void DisableEquipmentsWithAutoReset(float duration)
     {
-      // Cancel any existing countdown
       _resetCountdown?.Dispose();
-
-      // Disable all equipment
       DisableEquipments();
-
-      // Start new countdown to reset to DEFAULT
       StartResetCountdown(duration);
     }
 
@@ -98,7 +87,7 @@ namespace CupkekGames.Character
 
     private void OnResetComplete()
     {
-      EnableEquipment(VisualAccessoryRole.DEFAULT);
+      EnableEquipment(VisualAccessoryRoleKinds.DEFAULT);
       _resetCountdown?.Dispose();
       _resetCountdown = null;
     }

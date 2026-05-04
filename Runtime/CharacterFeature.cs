@@ -23,7 +23,7 @@ namespace CupkekGames.Character
 
         // Convenience accessors (delegate to HumonoidCharacter)
         public IAnimationEngine AnimationEngine => _character?.AnimationEngine;
-        public ILocomotion Locomotion => _character?.Locomotion;
+        public IAnimationStateController AnimationController => _character?.AnimationController;
         public BlendShapeController BlendShapeController => _character?.BlendShapeController;
         public EyeMovement EyeMovement => _character?.EyeMovement;
 

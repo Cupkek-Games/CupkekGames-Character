@@ -6,17 +6,21 @@ namespace CupkekGames.Character
 {
   public class AnimationDatabase : MonoBehaviour
   {
-    [SerializeField] private KeyValueDatabase<AnimationDatabaseClipType, AnimationClipData> _database;
+    [SerializeField] private KeyValueDatabase<string, AnimationClipData> _database;
 
-    public AnimationClipData GetAnimation(AnimationDatabaseClipType animationDatabaseClipType)
+    public AnimationClipData GetAnimation(string kind)
     {
-      if (_database.TryGetValue(animationDatabaseClipType, out AnimationClipData clipData))
+      if (string.IsNullOrEmpty(kind))
+      {
+        return null;
+      }
+
+      if (_database.TryGetValue(kind, out AnimationClipData clipData))
       {
         return clipData;
       }
 
-      Debug.LogError($"Animation not found for {animationDatabaseClipType}");
-
+      Debug.LogError($"Animation not found for {kind}");
       return null;
     }
   }

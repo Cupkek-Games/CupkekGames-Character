@@ -7,7 +7,7 @@ namespace CupkekGames.Character
   [Serializable]
   public class CharacterVisualAccessory
   {
-    [SerializeField] public VisualAccessoryRole Role;
+    [SerializeField] public string Role = VisualAccessoryRoleKinds.DEFAULT;
     [SerializeField] public GameObject GameObject;
   }
 }

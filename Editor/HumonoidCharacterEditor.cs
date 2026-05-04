@@ -1,25 +1,19 @@
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
-using CupkekGames.AddressableAssets;
-using CupkekGames.SceneManagement;
-using CupkekGames.Sequencer;
 using CupkekGames.Services;
-using CupkekGames.Settings;
-using CupkekGames.GameSave;
 
 namespace CupkekGames.Character
 {
   [CustomEditor(typeof(HumonoidCharacter))]
   public class HumonoidCharacterEditor : UnityEditor.Editor
   {
-    private BlendShapeEnum _selectedExpression = BlendShapeEnum.Neutral;
-    private AnimationDatabaseClipType _selectedAnimation = AnimationDatabaseClipType.None;
+    private string _selectedExpression = BlendShapeKinds.Neutral;
+    private string _selectedAnimation = AnimationClipKinds.None;
     private float _expressionDuration = 2f;
 
     public override void OnInspectorGUI()
     {
-      // Draw default inspector
       DrawDefaultInspector();
 
       HumonoidCharacter character = (HumonoidCharacter)target;
@@ -32,7 +26,7 @@ namespace CupkekGames.Character
       EditorGUILayout.Space(5);
       EditorGUILayout.LabelField("Expression", EditorStyles.boldLabel);
 
-      _selectedExpression = (BlendShapeEnum)EditorGUILayout.EnumPopup("Expression", _selectedExpression);
+      _selectedExpression = EditorGUILayout.TextField("Expression", _selectedExpression);
       _expressionDuration = EditorGUILayout.FloatField("Duration (seconds)", _expressionDuration);
 
       EditorGUI.BeginDisabledGroup(!Application.isPlaying);
@@ -59,9 +53,9 @@ namespace CupkekGames.Character
       EditorGUILayout.Space(10);
       EditorGUILayout.LabelField("Animation", EditorStyles.boldLabel);
 
-      _selectedAnimation = (AnimationDatabaseClipType)EditorGUILayout.EnumPopup("Animation Clip", _selectedAnimation);
+      _selectedAnimation = EditorGUILayout.TextField("Animation Clip", _selectedAnimation);
 
-      EditorGUI.BeginDisabledGroup(!Application.isPlaying || _selectedAnimation == AnimationDatabaseClipType.None);
+      EditorGUI.BeginDisabledGroup(!Application.isPlaying || string.IsNullOrEmpty(_selectedAnimation));
       if (GUILayout.Button("Play Animation"))
       {
         if (Application.isPlaying)

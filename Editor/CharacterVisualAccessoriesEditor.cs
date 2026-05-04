@@ -7,11 +7,10 @@ namespace CupkekGames.Character
   [CustomEditor(typeof(CharacterVisualAccessories))]
   public class CharacterVisualAccessoriesEditor : UnityEditor.Editor
   {
-    private VisualAccessoryRole _selectedRole = VisualAccessoryRole.DEFAULT;
+    private string _selectedRole = VisualAccessoryRoleKinds.DEFAULT;
 
     public override void OnInspectorGUI()
     {
-      // Draw default inspector
       DrawDefaultInspector();
 
       CharacterVisualAccessories accessories = (CharacterVisualAccessories)target;
@@ -21,9 +20,8 @@ namespace CupkekGames.Character
 
       EditorGUILayout.Space(5);
 
-      // Enable/Disable buttons
       EditorGUILayout.BeginHorizontal();
-      
+
       if (GUILayout.Button("Enable Equipments (Default)"))
       {
         accessories.EnableEquipments();
@@ -42,9 +40,8 @@ namespace CupkekGames.Character
 
       EditorGUILayout.Space(5);
 
-      // Role selection and enable with specific role
       EditorGUILayout.LabelField("Enable Equipment by Role", EditorStyles.boldLabel);
-      _selectedRole = (VisualAccessoryRole)EditorGUILayout.EnumPopup("Role", _selectedRole);
+      _selectedRole = EditorGUILayout.TextField("Role", _selectedRole);
 
       if (GUILayout.Button($"Enable Equipment ({_selectedRole})"))
       {

@@ -20,8 +20,8 @@ namespace CupkekGames.Character
     private BlendShapeController _blendShapeController;
     public BlendShapeController BlendShapeController => _blendShapeController;
     [SerializeField] private Transform _lookAtTarget;
-    private ILocomotion _locomotion;
-    public ILocomotion Locomotion => _locomotion;
+    private IAnimationStateController _animationController;
+    public IAnimationStateController AnimationController => _animationController;
     private IAnimationEngine _animationEngine;
     public IAnimationEngine AnimationEngine => _animationEngine;
     [SerializeField] private Transform _head;
@@ -37,7 +37,7 @@ namespace CupkekGames.Character
     public void Awake()
     {
       _blendShapeController = GetComponentInChildren<BlendShapeController>();
-      _locomotion = GetComponentInChildren<ILocomotion>();
+      _animationController = GetComponentInChildren<IAnimationStateController>();
       _animationEngine = GetComponentInChildren<IAnimationEngine>();
     }
 
@@ -46,7 +46,7 @@ namespace CupkekGames.Character
       // Create natural eye movement with constructor
       if (_lookAtTarget != null)
       {
-        _eyeMovement = new EyeMovement(_lookAtTarget, this, _locomotion);
+        _eyeMovement = new EyeMovement(_lookAtTarget, this, _animationController);
       }
       else
       {
@@ -74,9 +74,9 @@ namespace CupkekGames.Character
 
     public void ResetAnimatorPosition()
     {
-      if (_locomotion != null)
+      if (_animationController != null)
       {
-        Tween.LocalPosition(_locomotion.transform, Vector3.zero, 0.2f);
+        Tween.LocalPosition(_animationController.Transform, Vector3.zero, 0.2f);
       }
     }
 
@@ -109,7 +109,7 @@ namespace CupkekGames.Character
       }
     }
 
-    public async UniTaskVoid PlayExpression(BlendShapeDatabase blendShapeDatabase, BlendShapeEnum expression,
+    public async UniTaskVoid PlayExpression(BlendShapeDatabase blendShapeDatabase, string expression,
       float expressionDuration = 2f)
     {
       if (blendShapeDatabase == null)
@@ -133,7 +133,7 @@ namespace CupkekGames.Character
       if (expressionDuration > 0)
       {
         BlendShapeController.BlendToNewTargetWithDelay(
-          blendShapeDatabase.GetByType(BlendShapeEnum.Neutral), 0.5f, expressionDuration, BlendShapeEnum.Neutral);
+          blendShapeDatabase.GetByType(BlendShapeKinds.Neutral), 0.5f, expressionDuration, BlendShapeKinds.Neutral);
       }
 
       if (vfx != null && _emoteParticleController != null)
@@ -146,12 +146,12 @@ namespace CupkekGames.Character
 
     public void PlayAnimation(AnimationClip clip, float fadeDuration = 0.25f)
     {
-      if (_locomotion == null || clip == null)
+      if (_animationController == null || clip == null)
       {
         return;
       }
 
-      _locomotion.PlayClipWithReturnToIdle(clip, fadeDuration);
+      _animationController.PlayClipWithReturnToIdle(clip, fadeDuration);
     }
 
     #region Eye Movement Convenience Methods

@@ -36,7 +36,7 @@ namespace CupkekGames.Character
     private EyeMovementSettings _settings;
     private Transform _controller;
     private MonoBehaviour _coroutineRunner;
-    private ILocomotion _locomotion;
+    private IAnimationStateController _animationController;
 
     private Vector3 _originalLookAtPosition;
     private Vector3 _currentTargetPosition;
@@ -87,11 +87,11 @@ namespace CupkekGames.Character
     /// <param name="animatorController">AnimatorController to listen for animation events</param>
     /// <param name="settings">Eye movement settings</param>
     public EyeMovement(Transform controller, MonoBehaviour coroutineRunner,
-      ILocomotion locomotion = null, EyeMovementSettings settings = null)
+      IAnimationStateController animationController = null, EyeMovementSettings settings = null)
     {
       _controller = controller;
       _coroutineRunner = coroutineRunner;
-      _locomotion = locomotion;
+      _animationController = animationController;
       _settings = settings ?? new EyeMovementSettings();
 
       if (_controller != null)
@@ -101,9 +101,9 @@ namespace CupkekGames.Character
       }
 
       // Register to animation events
-      if (_locomotion != null)
+      if (_animationController != null)
       {
-        _locomotion.OnAnimationPlayed += OnAnimationPlayed;
+        _animationController.OnAnimationPlayed += OnAnimationPlayed;
       }
 
       if (_controller != null)
@@ -604,15 +604,15 @@ namespace CupkekGames.Character
           StopCurrentEyeMovement();
 
           // Unregister from animation events
-          if (_locomotion != null)
+          if (_animationController != null)
           {
-            _locomotion.OnAnimationPlayed -= OnAnimationPlayed;
+            _animationController.OnAnimationPlayed -= OnAnimationPlayed;
           }
 
           // Clear references
           _controller = null;
           _coroutineRunner = null;
-          _locomotion = null;
+          _animationController = null;
         }
 
         _disposed = true;

@@ -8,8 +8,7 @@ namespace CupkekGames.Character
 {
   public class BlendShapeController : MonoBehaviour
   {
-    // Pre-expression event - fires BEFORE expression is applied
-    public event Action<BlendShapeEnum> OnPreExpressionPlay;
+    public event Action<string> OnPreExpressionPlay;
 
     [SerializeField] private BlendShapeListSO _targetSO;
 
@@ -23,14 +22,11 @@ namespace CupkekGames.Character
       }
     }
 
-    /// <summary>
-    /// Sets the target SO and optionally fires pre-expression event
-    /// </summary>
-    public void SetTargetSO(BlendShapeListSO targetSO, BlendShapeEnum? expression = null)
+    public void SetTargetSO(BlendShapeListSO targetSO, string expression = null)
     {
-      if (expression.HasValue)
+      if (!string.IsNullOrEmpty(expression))
       {
-        OnPreExpressionPlay?.Invoke(expression.Value);
+        OnPreExpressionPlay?.Invoke(expression);
       }
 
       TargetSO = targetSO;
@@ -131,7 +127,7 @@ namespace CupkekGames.Character
     }
 
     public void BlendToNewTargetWithDelay(BlendShapeListSO target, float duration, float delay,
-      BlendShapeEnum? expression = null)
+      string expression = null)
     {
       if (_delayedBlendCoroutine != null)
       {
@@ -142,14 +138,13 @@ namespace CupkekGames.Character
     }
 
     private IEnumerator DelayedBlendToTarget(BlendShapeListSO target, float duration, float delay,
-      BlendShapeEnum? expression)
+      string expression)
     {
       yield return new WaitForSeconds(delay);
 
-      // Fire pre-expression event BEFORE applying the new expression
-      if (expression.HasValue)
+      if (!string.IsNullOrEmpty(expression))
       {
-        OnPreExpressionPlay?.Invoke(expression.Value);
+        OnPreExpressionPlay?.Invoke(expression);
       }
 
       _targetSO = target;
