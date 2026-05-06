@@ -33,12 +33,25 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "PRIMETWEEN_INSTALLED",
+        "UNITASK_INSTALLED"
+    ],
     "versionDefines": [
         {
             "name": "com.unity.addressables",
             "expression": "",
             "define": "UNITY_ADDRESSABLES"
+        },
+        {
+            "name": "PrimeTween.Runtime",
+            "expression": "",
+            "define": "PRIMETWEEN_INSTALLED"
+        },
+        {
+            "name": "UniTask",
+            "expression": "",
+            "define": "UNITASK_INSTALLED"
         }
     ],
     "noEngineReferences": false
