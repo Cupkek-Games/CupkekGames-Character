@@ -34,7 +34,8 @@ namespace CupkekGames.Character
 
     public List<BlendShapeData> TargetBlendShapes;
     [SerializeField] private SkinnedMeshRenderer _skinnedMeshRenderer;
-    [SerializeField] private BlendShapeListBlend _currentBlend;
+    // Runtime-only state (not authored / not serializable) — set via BlendToTarget().
+    private BlendShapeListBlend _currentBlend;
     private Coroutine _delayedBlendCoroutine;
 
     public void OnEnable()
