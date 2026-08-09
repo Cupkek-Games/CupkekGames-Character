@@ -33,6 +33,10 @@ namespace CupkekGames.Character
             // This feature is attached after spawn and wired via SetCharacter().
         }
 
+        // Scene references never clone: the copy starts unbound and is rebound at
+        // the next spawn via SetCharacter().
+        public IUnitFeature CloneFeature() => new CharacterFeature();
+
         public void OnDispose(Unit unit)
         {
             _character = null;
