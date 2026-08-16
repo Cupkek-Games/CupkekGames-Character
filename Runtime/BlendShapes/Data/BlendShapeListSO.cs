@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace CupkekGames.Character
 {
-  [CreateAssetMenu(fileName = "BlendShapeList", menuName = "3DModel/BlendShapeList")]
+  [CreateAssetMenu(fileName = "BlendShapeList", menuName = "CupkekGames/Character/Blend Shape List")]
   public class BlendShapeListSO : ScriptableObject
   {
     public List<BlendShapeData> BlendShapes;
