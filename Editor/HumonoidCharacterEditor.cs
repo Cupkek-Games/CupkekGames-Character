@@ -8,7 +8,7 @@ namespace CupkekGames.Character
   [CustomEditor(typeof(HumonoidCharacter))]
   public class HumonoidCharacterEditor : UnityEditor.Editor
   {
-    private string _selectedExpression = BlendShapeKinds.Neutral;
+    private string _selectedExpression = "Neutral";
     private string _selectedAnimation = AnimationClipKinds.None;
     private float _expressionDuration = 2f;
 
@@ -34,16 +34,7 @@ namespace CupkekGames.Character
       {
         if (Application.isPlaying)
         {
-          BlendShapeDatabase blendShapeDatabase = ServiceLocator.Get<BlendShapeDatabase>(true);
-          if (blendShapeDatabase != null)
-          {
-            character.PlayExpression(blendShapeDatabase, _selectedExpression, _expressionDuration).Forget();
-            Debug.Log($"Playing expression: {_selectedExpression} for {_expressionDuration} seconds");
-          }
-          else
-          {
-            Debug.LogError("BlendShapeDatabase not found in ServiceLocator");
-          }
+          character.PlayExpression(_selectedExpression, _expressionDuration);
         }
       }
 

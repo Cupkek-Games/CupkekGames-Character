@@ -6,7 +6,7 @@ namespace CupkekGames.Character
 {
     /// <summary>
     /// Bundles all 3D character visual sub-systems for a <see cref="Unit"/>.
-    /// Wraps: model spawn, animation engine, blend shapes, eye movement, accessories.
+    /// Wraps: model spawn, animation engine, face, eye movement, accessories.
     /// These sub-systems always co-occur — if a unit has a 3D model, it has all of these.
     /// </summary>
     public class CharacterFeature : IUnitFeature
@@ -24,7 +24,7 @@ namespace CupkekGames.Character
         // Convenience accessors (delegate to HumonoidCharacter)
         public IAnimationEngine AnimationEngine => _character?.AnimationEngine;
         public IAnimationStateController AnimationController => _character?.AnimationController;
-        public BlendShapeController BlendShapeController => _character?.BlendShapeController;
+        public FaceController Face => _character?.Face;
         public EyeMovement EyeMovement => _character?.EyeMovement;
 
         public void OnInitialize(Unit unit)

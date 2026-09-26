@@ -17,9 +17,14 @@ namespace CupkekGames.Character
 {
   public class HumonoidCharacter : MonoBehaviour
   {
-    private BlendShapeController _blendShapeController;
-    public BlendShapeController BlendShapeController => _blendShapeController;
+    private FaceController _face;
+
+    /// <summary>The face, or null on a character without a face rig yet.</summary>
+    public FaceController Face => _face;
+
     [SerializeField] private Transform _lookAtTarget;
+    /// <summary>The point EyeMovement moves and EyeAim aims the eyes at.</summary>
+    public Transform EyeTarget => _lookAtTarget;
     private IAnimationStateController _animationController;
     public IAnimationStateController AnimationController => _animationController;
     private IAnimationEngine _animationEngine;
@@ -36,9 +41,16 @@ namespace CupkekGames.Character
 
     public void Awake()
     {
-      _blendShapeController = GetComponentInChildren<BlendShapeController>();
+      _face = GetComponentInChildren<FaceController>();
       _animationController = GetComponentInChildren<IAnimationStateController>();
       _animationEngine = GetComponentInChildren<IAnimationEngine>();
+
+      if (_head == null)
+      {
+        // The humanoid bone, never a name search: a mesh can share a bone's name.
+        Animator animator = GetComponentInChildren<Animator>();
+        if (animator != null && animator.isHuman) _head = animator.GetBoneTransform(HumanBodyBones.Head);
+      }
     }
 
     private void OnEnable()
@@ -80,68 +92,28 @@ namespace CupkekGames.Character
       }
     }
 
-    private void AutoFindReferences()
+    /// <summary>
+    /// Play the expression registered under <paramref name="key"/>, returning to rest after
+    /// <paramref name="holdSeconds"/> (0 or less holds until the next expression), with the
+    /// key's emote VFX if <see cref="EmoteVFXDatabase"/> has one. An unknown key throws; a
+    /// character with no face rig yet plays only the emote.
+    /// </summary>
+    public void PlayExpression(string key, float holdSeconds = 2f)
     {
-      AutoFindLoopChildren(transform);
+      FaceExpressionSO expression = FaceExpressions.GetRequired(key);
+      if (_face != null) _face.Play(expression, holdSeconds);
+
+      PlayEmote(key, holdSeconds).Forget();
     }
 
-    private void AutoFindLoopChildren(Transform parent)
+    private async UniTaskVoid PlayEmote(string key, float holdSeconds)
     {
-      foreach (Transform child in parent)
-      {
-        if (child.name == "Head")
-        {
-          _head = child;
-        }
+      EmoteVFXDatabase emotes = ServiceLocator.Get<EmoteVFXDatabase>(true);
+      if (emotes == null || _emoteParticleController == null || EmotionTarget == null) return;
+      if (!emotes.TryGetValue(key, out VFXBundle vfx) || vfx == null) return;
 
-        if (child.name == "Look At")
-        {
-          _lookAtTarget = child;
-        }
-
-        if (_head != null && _lookAtTarget != null)
-        {
-          break;
-        }
-
-        // Recursively call LoopChildren to handle nested children
-        AutoFindLoopChildren(child);
-      }
-    }
-
-    public async UniTaskVoid PlayExpression(BlendShapeDatabase blendShapeDatabase, string expression,
-      float expressionDuration = 2f)
-    {
-      if (blendShapeDatabase == null)
-      {
-        blendShapeDatabase = ServiceLocator.Get<BlendShapeDatabase>();
-      }
-
-      if (BlendShapeController == null)
-      {
-        Debug.LogWarning($"BlendShapeController is null on {gameObject.name}");
-        return;
-      }
-
-      VFXBundle vfx = blendShapeDatabase.GetVFX(expression);
-
-      // Use SetTargetSO to fire pre-expression event
-      BlendShapeController.SetTargetSO(blendShapeDatabase.GetByType(expression), expression);
-      BlendShapeController.BlendToTarget(0.5f);
-
-      // Schedule return to neutral after expression duration
-      if (expressionDuration > 0)
-      {
-        BlendShapeController.BlendToNewTargetWithDelay(
-          blendShapeDatabase.GetByType(BlendShapeKinds.Neutral), 0.5f, expressionDuration, BlendShapeKinds.Neutral);
-      }
-
-      if (vfx != null && _emoteParticleController != null)
-      {
-        TimeManager timeManager = TimeManager.Instance;
-        int durationMs = (int)(expressionDuration * 1000);
-        await _emoteParticleController.PlayParticle(vfx, gameObject, EmotionTarget, durationMs, timeManager);
-      }
+      int durationMs = (int)(Mathf.Max(holdSeconds, 0.5f) * 1000);
+      await _emoteParticleController.PlayParticle(vfx, gameObject, EmotionTarget, durationMs, TimeManager.Instance);
     }
 
     public void PlayAnimation(AnimationClip clip, float fadeDuration = 0.25f)

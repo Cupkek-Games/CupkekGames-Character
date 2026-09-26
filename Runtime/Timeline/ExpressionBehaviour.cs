@@ -5,22 +5,24 @@ namespace CupkekGames.Character.Timeline
 {
     public class ExpressionBehaviour : PlayableBehaviour
     {
-        public BlendShapeListSO TargetExpression;
+        public FaceExpressionSO TargetExpression;
         public float BlendDuration;
 
         public override void ProcessFrame(Playable playable, FrameData info, object playerData)
         {
-            BlendShapeController blendShapeController = playerData as BlendShapeController;
-
-            blendShapeController.TargetSO = TargetExpression;
-
-            if (BlendDuration != 0 && Application.isPlaying)
+            FaceController face = playerData as FaceController;
+            if (face == null || TargetExpression == null || face.Current == TargetExpression)
             {
-                blendShapeController.BlendToTarget(BlendDuration);
+                return;
+            }
+
+            if (Application.isPlaying && BlendDuration > 0f)
+            {
+                face.Play(TargetExpression, 0f, BlendDuration);
             }
             else
             {
-                blendShapeController.ApplyValuesFromTarget();
+                face.Snap(TargetExpression);
             }
         }
     }

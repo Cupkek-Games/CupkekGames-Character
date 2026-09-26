@@ -5,7 +5,7 @@ namespace CupkekGames.Character.Timeline
 {
     public class ExpressionClip : PlayableAsset
     {
-        public BlendShapeListSO TargetExpression;
+        public FaceExpressionSO TargetExpression;
         public float BlendDuration;
 
         public override Playable CreatePlayable(PlayableGraph graph, GameObject owner)

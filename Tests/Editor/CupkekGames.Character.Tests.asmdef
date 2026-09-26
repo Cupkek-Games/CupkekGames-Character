@@ -1,0 +1,25 @@
+{
+    "name": "CupkekGames.Character.Tests",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c638d9e1907db5c458288a361efefb01",
+        "GUID:13ea70b1a52b548428331eb204efc814",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
