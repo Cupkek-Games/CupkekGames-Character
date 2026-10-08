@@ -51,7 +51,7 @@ namespace CupkekGames.Character
       vfx.DestroyDelayMS = durationMs;
       try
       {
-        _activeEmoteParticle = await vfx.Play(parent, targetTransform, ct, localTimeBundle, null);
+        _activeEmoteParticle = await vfx.Play(parent, targetTransform, ct, localTimeBundle);
       }
       catch (OperationCanceledException)
       {
