@@ -146,6 +146,10 @@ namespace CupkekGames.Character
 
       sequence.ChainCallback(StartNaturalEyeMovement);
 
+      // Tracked like every other eye tween, so Dispose (the character's
+      // OnDisable) stops it: left running, its callback fired on a destroyed
+      // character when a scene unloaded mid-glance.
+      _currentEyeMovementTween = sequence;
       return sequence;
     }
 
