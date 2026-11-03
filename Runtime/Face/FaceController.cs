@@ -14,8 +14,10 @@ namespace CupkekGames.Character
   /// expressions' <see cref="FaceBlinkPolicy"/> (the gate crossfades with the face);</item>
   /// <item>mid-path corrections: each written channel drives its <c>X_mid</c> shape.</item>
   /// </list>
-  /// The rig binds every child mesh with shape keys (minus <see cref="_exclude"/>). Channels no
-  /// expression or blink ever touched are never written, so body shape keys keep their values.
+  /// The rig binds every child mesh with shape keys (minus <see cref="_exclude"/>), and the
+  /// channels other components add (<see cref="AddChannel"/>): a blush or a sweat drop is a
+  /// channel like any shape key, so an expression lists it and it fades with the face. Channels
+  /// no expression or blink ever touched are never written, so body shape keys keep their values.
   /// </summary>
   [DisallowMultipleComponent]
   public class FaceController : MonoBehaviour
@@ -34,6 +36,7 @@ namespace CupkekGames.Character
     public event Action<FaceExpressionSO> ExpressionChanged;
 
     private FaceRig _rig;
+    private readonly List<KeyValuePair<string, Action<float>>> _sinks = new();
 
     // Expression layer, keyed by channel name so a rig rebuild keeps the state.
     private readonly Dictionary<string, float> _from = new();
@@ -95,10 +98,33 @@ namespace CupkekGames.Character
       return renderers;
     }
 
+    /// <summary>
+    /// Adds a channel that is not a shape key: the face composes it like any other (expressions
+    /// list it, it fades with them) and hands <paramref name="write"/> its weight, 0 to 100,
+    /// whenever it changes. Several writers can share a name.
+    /// </summary>
+    public void AddChannel(string name, Action<float> write)
+    {
+      if (string.IsNullOrEmpty(name)) throw new ArgumentException("A face channel needs a name.", nameof(name));
+      if (write == null) throw new ArgumentNullException(nameof(write));
+      _sinks.Add(new KeyValuePair<string, Action<float>>(name, write));
+      Touch(name);
+      if (_rig != null) RebuildRig();
+    }
+
+    /// <summary>Removes a channel <see cref="AddChannel"/> added.</summary>
+    public void RemoveChannel(string name, Action<float> write)
+    {
+      int index = _sinks.FindIndex(sink => sink.Key == name && sink.Value == write);
+      if (index < 0) return;
+      _sinks.RemoveAt(index);
+      if (_rig != null) RebuildRig();
+    }
+
     /// <summary>Rebind after meshes were added, removed or swapped under this character.</summary>
     public void RebuildRig()
     {
-      _rig = FaceRig.Build(CollectRenderers());
+      _rig = FaceRig.Build(CollectRenderers(), _sinks);
       _blinkSet.Clear();
       foreach (string channel in _blinkChannels)
       {

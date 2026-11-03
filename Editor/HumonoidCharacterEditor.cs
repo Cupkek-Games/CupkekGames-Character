@@ -34,7 +34,8 @@ namespace CupkekGames.Character
       {
         if (Application.isPlaying)
         {
-          character.PlayExpression(_selectedExpression, _expressionDuration);
+          if (character.Face == null) Debug.LogError($"{character.name} has no face rig.");
+          else character.Face.Play(FaceExpressions.GetRequired(_selectedExpression), _expressionDuration);
         }
       }
 

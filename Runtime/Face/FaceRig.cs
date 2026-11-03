@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -8,7 +9,9 @@ namespace CupkekGames.Character
   /// over many meshes (face, brows, lashes, teeth, tongue) answers to one channel name, and
   /// blendshape indices are looked up here at build time, so a re-export that reorders
   /// shapes changes nothing. A shape named <c>X_mid</c> is bound as the mid-path correction
-  /// of channel <c>X</c> and is driven from X's weight, never directly.
+  /// of channel <c>X</c> and is driven from X's weight, never directly. A channel can also
+  /// have sinks: components that are not shape keys (a blush, a sweat drop) and take the
+  /// channel's weight whenever it changes (<see cref="FaceController.AddChannel"/>).
   /// </summary>
   public sealed class FaceRig
   {
@@ -33,6 +36,7 @@ namespace CupkekGames.Character
       public readonly string Name;
       public readonly List<Binding> Targets = new();
       public readonly List<Binding> Mids = new();
+      public readonly List<Action<float>> Sinks = new();
 
       // Last values this rig wrote; NaN = never written, so the first write always lands.
       public float Written = float.NaN;
@@ -51,7 +55,10 @@ namespace CupkekGames.Character
     /// <summary><c>X_mid</c> shapes with no <c>X</c> on any mesh: an export bug.</summary>
     public IReadOnlyList<string> OrphanMidKeys => _orphanMids;
 
-    public static FaceRig Build(IEnumerable<SkinnedMeshRenderer> renderers)
+    public static FaceRig Build(IEnumerable<SkinnedMeshRenderer> renderers) => Build(renderers, null);
+
+    /// <summary>Binds <paramref name="renderers"/>' shape keys and <paramref name="sinks"/>' channels by name.</summary>
+    public static FaceRig Build(IEnumerable<SkinnedMeshRenderer> renderers, IEnumerable<KeyValuePair<string, Action<float>>> sinks)
     {
       var rig = new FaceRig();
       var mids = new List<(string channel, Binding binding)>();
@@ -72,6 +79,15 @@ namespace CupkekGames.Character
           }
 
           rig.GetOrAdd(shape).Targets.Add(new Binding(renderer, i));
+        }
+      }
+
+      if (sinks != null)
+      {
+        foreach (KeyValuePair<string, Action<float>> sink in sinks)
+        {
+          if (string.IsNullOrEmpty(sink.Key) || sink.Value == null) continue;
+          rig.GetOrAdd(sink.Key).Sinks.Add(sink.Value);
         }
       }
 
@@ -104,10 +120,11 @@ namespace CupkekGames.Character
       return 100f * (1f - Mathf.Abs(2f * t - 1f));
     }
 
-    /// <summary>Reads the channel's current weight from its first mesh (0 if the rig lacks it).</summary>
+    /// <summary>Reads the channel's current weight from its first mesh, or what the rig last wrote to a sink-only channel (0 if the rig lacks it).</summary>
     public float Read(string name)
     {
-      if (!_channels.TryGetValue(name ?? string.Empty, out Channel channel) || channel.Targets.Count == 0) return 0f;
+      if (!_channels.TryGetValue(name ?? string.Empty, out Channel channel)) return 0f;
+      if (channel.Targets.Count == 0) return float.IsNaN(channel.Written) ? 0f : channel.Written;
       Binding first = channel.Targets[0];
       return first.Renderer != null ? first.Renderer.GetBlendShapeWeight(first.Index) : 0f;
     }
@@ -128,7 +145,7 @@ namespace CupkekGames.Character
       return !string.IsNullOrEmpty(name) && _channels.TryGetValue(name, out channel);
     }
 
-    /// <summary>Write a weight to every mesh carrying the channel, and its mid correction.</summary>
+    /// <summary>Write a weight to every mesh carrying the channel, its sinks, and its mid correction.</summary>
     internal void Write(Channel channel, float weight)
     {
       if (float.IsNaN(channel.Written) || Mathf.Abs(channel.Written - weight) > WriteEpsilon)
@@ -138,6 +155,7 @@ namespace CupkekGames.Character
           if (target.Renderer != null) target.Renderer.SetBlendShapeWeight(target.Index, weight);
         }
 
+        foreach (Action<float> sink in channel.Sinks) sink(weight);
         channel.Written = weight;
       }
 

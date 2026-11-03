@@ -7,7 +7,7 @@ namespace CupkekGames.Character
   /// the eyes' shared forward, is applied to both, so near targets never cross the eyes and
   /// both move at the same speed. The rotation is clamped to <see cref="MaxAngle"/>, past
   /// which a stylized eye clips through the head. The target is usually the look-at point
-  /// that <see cref="EyeMovement"/> drives.
+  /// that <see cref="Gaze"/> drives.
   /// </summary>
   [DisallowMultipleComponent]
   public class EyeAim : MonoBehaviour

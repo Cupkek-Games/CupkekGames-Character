@@ -25,7 +25,7 @@ namespace CupkekGames.Character
         public IAnimationEngine AnimationEngine => _character?.AnimationEngine;
         public IAnimationStateController AnimationController => _character?.AnimationController;
         public FaceController Face => _character?.Face;
-        public EyeMovement EyeMovement => _character?.EyeMovement;
+        public Gaze Gaze => _character?.Gaze;
 
         public void OnInitialize(Unit unit)
         {

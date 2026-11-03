@@ -3,9 +3,10 @@ using UnityEngine;
 namespace CupkekGames.Character
 {
   /// <summary>
-  /// Blinks at random intervals by driving <see cref="FaceController.Blink01"/>. Knows no shape
-  /// names: the controller decides which channels close and whether the current expression
-  /// allows it, so the blinker runs under every face.
+  /// Blinks at random intervals by driving <see cref="FaceController.Blink01"/>, now and then
+  /// twice in a row so the rhythm never reads as a timer. Knows no shape names: the controller
+  /// decides which channels close and whether the current expression allows it, so the blinker
+  /// runs under every face. <see cref="Gaze"/> blinks it on a wide eye jump.
   /// </summary>
   [RequireComponent(typeof(FaceController))]
   public class Blinker : MonoBehaviour
@@ -15,6 +16,12 @@ namespace CupkekGames.Character
     [SerializeField, Min(0.001f)] private float _closeSeconds = 0.1f;
     [SerializeField, Min(0f)] private float _closedSeconds = 0.06f;
     [SerializeField, Min(0.001f)] private float _openSeconds = 0.03f;
+
+    [Tooltip("The chance a blink comes twice in a row.")]
+    [SerializeField, Range(0f, 1f)] private float _doubleChance = 0.18f;
+
+    [Tooltip("The pause between the two blinks of a double, in seconds.")]
+    [SerializeField, Min(0f)] private float _doubleGap = 0.1f;
 
     private enum Phase
     {
@@ -27,6 +34,7 @@ namespace CupkekGames.Character
     private FaceController _face;
     private Phase _phase;
     private float _phaseEnd;
+    private bool _second;
 
     /// <summary>Blink now (or as soon as the current blink finishes).</summary>
     public void BlinkNow()
@@ -70,7 +78,16 @@ namespace CupkekGames.Character
           if (now >= _phaseEnd)
           {
             _face.Blink01 = 0f;
-            Wait(now);
+            if (!_second && Random.value < _doubleChance)
+            {
+              _second = true;
+              Enter(Phase.Waiting, now + _doubleGap);
+            }
+            else
+            {
+              _second = false;
+              Wait(now);
+            }
           }
 
           break;
