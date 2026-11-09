@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using CupkekGames.Services;
 using CupkekGames.TimeSystem;
 using System.Threading;
 
@@ -11,6 +12,7 @@ namespace CupkekGames.Character
     public List<CharacterVisualAccessory> PlayerEquipments => _equipments;
 
     private CountdownTimeContext _resetCountdown;
+    private TimeManager _time;
 
     private void Awake()
     {
@@ -74,13 +76,14 @@ namespace CupkekGames.Character
 
     private void StartResetCountdown(float duration)
     {
-      TimeContext timeContext = TimeManager.Instance?.Global;
-      if (timeContext == null)
+      if (_time == null)
       {
-        return;
+        // Only an edit-mode preview runs without a TimeManager; the props then stay as set.
+        _time = ServiceLocator.Get<TimeManager>(silent: !Application.isPlaying);
+        if (_time == null) return;
       }
 
-      _resetCountdown = new CountdownTimeContext(timeContext, duration, 0, 0.1f, CancellationToken.None);
+      _resetCountdown = new CountdownTimeContext(_time.Global, duration, 0, 0.1f, CancellationToken.None);
       _resetCountdown.OnComplete += OnResetComplete;
       _resetCountdown.Start();
     }
