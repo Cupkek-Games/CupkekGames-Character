@@ -16,7 +16,7 @@ Humanoid character primitives shared across CupkekGames games.
 - `Blinker` (drives `FaceController.Blink01`, now and then a double blink) and `EyeAim` (parallel, clamped procedural eye aim).
 - `Gaze` — where she looks and the life in her eyes: a look someone asked for, else who acts nearby, else her own saccade glances; a wide jump blinks; turns the head through `HeadLook` when a look asks for it.
 - `AttentionSO` — who acts, as an asset (no statics): a system raises a cue on it (`Raise`) and every `Gaze` holding it may glance at the strongest nearby; a system can mute it while it runs (a fight).
-- `HeadLook` — turns the head and part of the neck toward a point or a moving target after animation, on top of any clip (a seated pose that looks down can still lift its face); clamped, fading in and out, the face measured in the rest pose so any humanoid rig works.
+- `HeadLook` — turns the head and part of the neck toward a point or a moving target after animation, on top of any clip (a seated pose that looks down can still lift its face); clamped, fading in and out, the face measured in the rest pose so any humanoid rig works. `Pass` picks where the turn lands: after animation (default) or in the Animator's IK pass (its look-at), so what rides the head (a particle) turns with it; the IK pass must be on (Animancer: `AnimancerGraph.ApplyAnimatorIK`), and a silent one is reported.
 - `CharacterVisualAccessories` — equipment slot manager that swaps active accessory GameObjects per role with auto-reset support.
 
 **Editor** (`CupkekGames.Character.Editor.asmdef`)
