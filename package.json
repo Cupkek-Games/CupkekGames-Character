@@ -1,14 +1,14 @@
 {
   "name": "com.cupkekgames.character",
   "displayName": "CupkekGames Character",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "author": {
     "name": "CupkekGames",
     "url": "https://www.docs.cupkek.games"
   },
   "unity": "6000.0",
   "documentationUrl": "https://docs.cupkek.games/",
-  "description": "Humanoid character primitives: HumonoidCharacter component, ModelCharacterSO wrapper, a layered face (FaceController, FaceExpressionSO + catalog, Blinker, EyeAim, FaceRigValidator), CharacterDefinition (IUnitFeatureDefinition), CharacterVisualAccessories slot system.",
+  "description": "Humanoid character primitives: HumonoidCharacter component, ModelCharacterSO wrapper, a layered face (FaceController, FaceExpressionSO + catalog, Blinker, EyeAim, FaceRigValidator), CharacterDefinition (IUnitFeatureDefinition), CharacterVisualAccessories held props and CharacterWear removable parts, both on counted holds.",
   "keywords": [
     "Character",
     "Humanoid",
@@ -20,11 +20,12 @@
     "com.cupkekgames.addressableassets": "0.2.1",
     "com.cupkekgames.animations": "0.4.0",
     "com.cupkekgames.data": "0.5.0",
+    "com.cupkekgames.holds": "0.1.0",
     "com.cupkekgames.keyvaluedatabases": "0.3.0",
     "com.cupkekgames.services": "0.3.0",
     "com.cupkekgames.timesystem": "0.5.0",
     "com.cupkekgames.units": "0.4.3",
-    "com.cupkekgames.vfx": "0.5.2",
+    "com.cupkekgames.vfx": "0.5.3",
     "com.unity.timeline": "1.8.7"
   }
 }
